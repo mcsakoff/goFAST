@@ -9,11 +9,11 @@ import (
 )
 
 type decimalType struct {
-	TemplateID           uint `fast:"*"`
-	CopyDecimal          float64
-	MandatoryDecimal     float64
-	IndividualDecimal    float64
-	IndividualDecimalOpt float64
+	TemplateID                        uint `fast:"*"`
+	CopyDecimal                       float64
+	MandatoryDecimal                  float64
+	IndividualDecimal                 float64
+	IndividualDecimalOpt              float64
 	IndividualDecimalOptExpNotPresent *float64
 }
 
@@ -110,7 +110,7 @@ type benchmarkReceiver struct {
 	benchmarkMessage
 
 	seqLocked bool
-	seqIndex int
+	seqIndex  int
 }
 
 func (br *benchmarkReceiver) SetTemplateID(tid uint) {

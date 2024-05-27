@@ -12,13 +12,13 @@ import (
 
 // A Encoder encodes and writes data to io.Writer.
 type Encoder struct {
-	repo map[uint]Template
+	repo    map[uint]Template
 	storage storage
 
 	tid uint // template id
 	pmc *pMapCollector
 
-	writers []*writer
+	writers     []*writer
 	writerIndex int // index for current writer
 
 	msg Sender
@@ -26,7 +26,7 @@ type Encoder struct {
 	target io.Writer
 
 	logger *writerLog
-	mu sync.Mutex
+	mu     sync.Mutex
 }
 
 // Reset resets dictionary
@@ -39,10 +39,10 @@ func (e *Encoder) Reset() {
 // NewEncoder returns a new encoder that writes FAST-encoded message to writer.
 func NewEncoder(writer io.Writer, tmps ...*Template) *Encoder {
 	encoder := &Encoder{
-		repo: make(map[uint]Template),
+		repo:    make(map[uint]Template),
 		storage: make(map[string]interface{}),
-		target: writer,
-		pmc: newPMapCollector(),
+		target:  writer,
+		pmc:     newPMapCollector(),
 	}
 	for _, t := range tmps {
 		encoder.repo[t.ID] = t.clone()
@@ -112,14 +112,14 @@ func (e *Encoder) addWriter() {
 	} else {
 		e.writers = append(e.writers, newWriter(&bytes.Buffer{}, &bytes.Buffer{}))
 	}
-	e.writerIndex = len(e.writers) -1
+	e.writerIndex = len(e.writers) - 1
 }
 
 func (e *Encoder) delWriterTo(index int) {
 	if e.logger != nil {
 		e.log("rewrite from buffer <- ")
 	}
-	for i:=index+1; i<=len(e.writers)-1; i++ {
+	for i := index + 1; i <= len(e.writers)-1; i++ {
 		e.writers[i].WriteTo(e.writers[index])
 	}
 	e.writers = e.writers[:index+1]
@@ -236,7 +236,7 @@ func (e *Encoder) encodeSequence(instruction *Instruction) error {
 	}
 
 	current := e.writerIndex // remember current writer index
-	for i:=0; i<length; i++ {
+	for i := 0; i < length; i++ {
 		parent.Value = i
 		e.log("sequence elem[", i, "] start: ")
 

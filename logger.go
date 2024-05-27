@@ -23,7 +23,7 @@ func wrapWriterLog(writer io.Writer) *writerLog {
 
 func (l *writerLog) Write(b []byte) (n int, err error) {
 	_, _ = l.log.Write([]byte(fmt.Sprintf("%x", b)))
-	return 	l.Buffer.Write(b)
+	return l.Buffer.Write(b)
 }
 
 func (l *writerLog) WriteTo(w io.Writer) (n int64, err error) {
@@ -50,7 +50,7 @@ type readerLog struct {
 }
 
 func wrapReaderLog(reader io.Reader, writer io.Writer) *readerLog {
-	return &readerLog{reader,writer, "\n"}
+	return &readerLog{reader, writer, "\n"}
 }
 
 func (l *readerLog) Read(b []byte) (n int, err error) {

@@ -40,15 +40,15 @@ type SenderSeq struct {
 }
 
 type SenderMsg struct {
-	TemplateID  uint
-	Type   string
-	Test   string
-	Time   uint64
-	Equal        int32
-	Sequence    []SenderSeq
+	TemplateID uint
+	Type       string
+	Test       string
+	Time       uint64
+	Equal      int32
+	Sequence   []SenderSeq
 
 	seqLocked bool
-	seqIndex int
+	seqIndex  int
 }
 
 func (br *SenderMsg) GetTemplateID() uint {
@@ -87,7 +87,7 @@ func Example_senderEncode() {
 	var buf bytes.Buffer
 	var msg = SenderMsg{
 		TemplateID: 1,
-		Test: "test",
+		Test:       "test",
 		Sequence: []SenderSeq{
 			{SomeField: 2},
 		},

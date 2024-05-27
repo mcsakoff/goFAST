@@ -7,8 +7,9 @@ package fast_test
 import (
 	"bytes"
 	"fmt"
-	"github.com/co11ter/goFAST"
 	"strings"
+
+	"github.com/co11ter/goFAST"
 )
 
 func ExampleDecoder_Decode_reflection() {
@@ -37,9 +38,9 @@ func ExampleDecoder_Decode_reflection() {
 		TemplateID  uint    `fast:"*"`    // template id
 		FieldByID   string  `fast:"15"`   // assign value by instruction id
 		FieldByName string  `fast:"Test"` // assign value by instruction name
-		Equal       int32   			  // name of field is default value for assign
-		Nullable    *uint64 `fast:"20"`   // nullable - will skip, if field data is absent
-		Skip        int     `fast:"-"`    // skip
+		Equal       int32   // name of field is default value for assign
+		Nullable    *uint64 `fast:"20"` // nullable - will skip, if field data is absent
+		Skip        int     `fast:"-"`  // skip
 		Sequence    []Seq
 	}
 
@@ -91,15 +92,15 @@ func ExampleEncoder_Encode_reflection() {
 		TemplateID  uint    `fast:"*"`    // template id
 		FieldByID   string  `fast:"15"`   // assign value by instruction id
 		FieldByName string  `fast:"Test"` // assign value by instruction name
-		Equal       int32   			  // name of field is default value for assign
-		Nullable    *uint64 `fast:"20"`   // nullable - will skip, if field data is absent
-		Skip        int     `fast:"-"`    // skip
+		Equal       int32   // name of field is default value for assign
+		Nullable    *uint64 `fast:"20"` // nullable - will skip, if field data is absent
+		Skip        int     `fast:"-"`  // skip
 		Sequence    []Seq
 	}
 
 	var buf bytes.Buffer
 	var msg = ReflectMsg{
-		TemplateID: 1,
+		TemplateID:  1,
 		FieldByName: "test",
 		Sequence: []Seq{
 			{SomeField: 2},

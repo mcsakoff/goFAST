@@ -22,8 +22,8 @@ type register struct {
 
 type reflector struct {
 	current *register
-	values []reflect.Value
-	index int
+	values  []reflect.Value
+	index   int
 }
 
 func makeMsg(msg interface{}) (m *reflector) {
@@ -185,11 +185,11 @@ func (m *reflector) lookUpIndex(field *Field) {
 func parseType(rt reflect.Type, current *register) (countID, countName int) {
 	var (
 		field reflect.StructField
-		tmp reflect.Type
-		name string
-		id int
-		err error
-		ok bool
+		tmp   reflect.Type
+		name  string
+		id    int
+		err   error
+		ok    bool
 	)
 	for i := 0; i < rt.NumField(); i++ {
 

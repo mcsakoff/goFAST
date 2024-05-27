@@ -30,7 +30,7 @@ Run `go test -bench=.`. Only Decoder Benchmark is implemented.
     BenchmarkDecoder_DecodeReceiver-4     	  300000	      5453 ns/op	     321 B/op	      32 allocs/op
     PASS
     ok  	github.com/co11ter/goFAST	4.977s
-    
+
 TODO
 ----
 

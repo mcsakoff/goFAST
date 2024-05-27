@@ -15,7 +15,7 @@ type Instruction struct {
 	Value        interface{}
 
 	pMapSize int
-	key   string
+	key      string
 }
 
 func (i *Instruction) isValid() bool {

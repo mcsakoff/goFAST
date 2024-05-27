@@ -34,15 +34,15 @@ type ReceiverSeq struct {
 }
 
 type ReceiverMsg struct {
-	TemplateID  uint
-	Type   string
-	Test   string
-	Time   uint64
-	Equal        int32
-	Sequence    []ReceiverSeq
+	TemplateID uint
+	Type       string
+	Test       string
+	Time       uint64
+	Equal      int32
+	Sequence   []ReceiverSeq
 
 	seqLocked bool
-	seqIndex int
+	seqIndex  int
 }
 
 func (br *ReceiverMsg) SetTemplateID(tid uint) {

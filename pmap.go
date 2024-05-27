@@ -8,18 +8,18 @@ const defaultMask = 128
 
 type pMap struct {
 	bitmap uint
-	mask uint
+	mask   uint
 }
 
 func (p *pMap) IsNextBitSet() bool {
 	p.mask >>= 1
-	return (p.bitmap & p.mask) != 0;
+	return (p.bitmap & p.mask) != 0
 }
 
 func (p *pMap) SetNextBit(v bool) {
 	p.mask >>= 1
 	if v {
-		p.bitmap |= p.mask;
+		p.bitmap |= p.mask
 	}
 }
 
@@ -37,7 +37,7 @@ func (p *pMap) String() (res string) {
 }
 
 type pMapCollector struct {
-	data []*pMap
+	data  []*pMap
 	index int // index for current presence map
 }
 
@@ -53,7 +53,7 @@ func (c *pMapCollector) reset() {
 func (c *pMapCollector) append(m *pMap) {
 	c.data = append(c.data, m)
 	if m != nil {
-		c.index = len(c.data)-1
+		c.index = len(c.data) - 1
 	}
 }
 

@@ -1,9 +1,10 @@
 package fast_test
 
 import (
-	"github.com/co11ter/goFAST"
 	"strings"
 	"testing"
+
+	"github.com/co11ter/goFAST"
 )
 
 var (

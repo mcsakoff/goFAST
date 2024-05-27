@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	maxSize32 = 4*8/7
-	maxSize64 = 8*8/7
+	maxSize32 = 4 * 8 / 7
+	maxSize64 = 8 * 8 / 7
 )
 
 type buffer interface {
@@ -54,7 +54,7 @@ func (w *writer) WritePMap(m *pMap) error {
 	}
 
 	b := make([]byte, 8)
-	i :=7
+	i := 7
 	for i >= 0 && m.bitmap != 0 {
 		b[i] = byte(m.bitmap)
 		m.bitmap >>= 7
@@ -127,7 +127,7 @@ func (w *writer) WriteInt(nullable bool, value int64, size int) (err error) {
 	}
 
 	b[size] |= 0x80
-	_, err = w.dataBuf.Write(b[i:size+1])
+	_, err = w.dataBuf.Write(b[i : size+1])
 	return
 }
 

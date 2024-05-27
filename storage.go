@@ -20,4 +20,3 @@ func (s storage) load(key string) interface{} {
 	}
 	return nil
 }
-

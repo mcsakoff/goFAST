@@ -74,7 +74,7 @@ func (r *reader) ReadInt(nullable bool) (*int64, error) {
 	r.tmpDcrm = 1
 
 	if (r.bytes[0] & 0x40) > 0 {
-		r.tmpInt = int64((-1 ^ int8(0x7F)) | int8((r.bytes[0] & 0x7F)))
+		r.tmpInt = int64((-1 ^ int8(0x7F)) | int8(r.bytes[0]&0x7F))
 		r.tmpDcrm = 0
 	} else {
 		r.tmpInt = int64(r.bytes[0] & 0x3F)

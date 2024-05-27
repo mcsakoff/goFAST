@@ -6,15 +6,16 @@ package fast_test
 
 import (
 	"bytes"
-	"github.com/co11ter/goFAST"
 	"os"
 	"reflect"
 	"testing"
+
+	"github.com/co11ter/goFAST"
 )
 
 var (
 	encoder *fast.Encoder
-	writer *bytes.Buffer
+	writer  *bytes.Buffer
 )
 
 func init() {

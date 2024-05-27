@@ -13,8 +13,8 @@ import (
 
 const (
 	uintSize = 32 << (^uint(0) >> 32 & 1)
-	maxInt = 1<<(uintSize-1) - 1
-	maxUint = 1<<uintSize - 1
+	maxInt   = 1<<(uintSize-1) - 1
+	maxUint  = 1<<uintSize - 1
 )
 
 func castTo(src, dst interface{}) error {
