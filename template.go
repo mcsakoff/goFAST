@@ -13,18 +13,19 @@ import (
 const (
 	tagTemplate = "template"
 
-	tagString     = "string"
-	tagInt32      = "int32"
-	tagUint32     = "uInt32"
-	tagInt64      = "int64"
-	tagUint64     = "uInt64"
-	tagDecimal    = "decimal"
-	tagSequence   = "sequence"
-	tagGroup      = "group"
-	tagLength     = "length"
-	tagExponent   = "exponent"
-	tagMantissa   = "mantissa"
-	tagByteVector = "byteVector"
+	tagString      = "string"
+	tagInt32       = "int32"
+	tagUint32      = "uInt32"
+	tagInt64       = "int64"
+	tagUint64      = "uInt64"
+	tagDecimal     = "decimal"
+	tagSequence    = "sequence"
+	tagGroup       = "group"
+	tagLength      = "length"
+	tagExponent    = "exponent"
+	tagMantissa    = "mantissa"
+	tagByteVector  = "byteVector"
+	tagTemplateRef = "templateRef"
 
 	tagIncrement = "increment"
 	tagConstant  = "constant"
@@ -70,6 +71,7 @@ const (
 	TypeByteVector
 	TypeSequence
 	TypeGroup
+	TypeTemplateReference
 
 	OperatorNone InstructionOperator = iota
 	OperatorConstant
@@ -355,6 +357,8 @@ func newInstruction(token *xml.StartElement) (*Instruction, error) {
 		instruction.Type = TypeMantissa
 	case tagByteVector:
 		instruction.Type = TypeByteVector
+	case tagTemplateRef:
+		instruction.Type = TypeTemplateReference
 	default:
 		instruction.Type = TypeNull
 	}

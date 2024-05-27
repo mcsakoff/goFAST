@@ -115,20 +115,23 @@ func (e *Encoder) addWriter() {
 	e.writerIndex = len(e.writers) - 1
 }
 
-func (e *Encoder) delWriterTo(index int) {
+func (e *Encoder) delWriterTo(index int) error {
 	if e.logger != nil {
 		e.log("rewrite from buffer <- ")
 	}
 	for i := index + 1; i <= len(e.writers)-1; i++ {
-		e.writers[i].WriteTo(e.writers[index])
+		_, err := e.writers[i].WriteTo(e.writers[index])
+		if err != nil {
+			return err
+		}
 	}
 	e.writers = e.writers[:index+1]
+	return nil
 }
 
 func (e *Encoder) commit() error {
-	// TODO have to check err
-	e.writers[e.writerIndex].WriteTo(e.target)
-	return nil
+	_, err := e.writers[e.writerIndex].WriteTo(e.target)
+	return err
 }
 
 func (e *Encoder) acceptTemplateID(id uint32) {
@@ -149,6 +152,9 @@ func (e *Encoder) encodeSegment(instructions []*Instruction) error {
 			err = e.encodeSequence(instruction)
 		case TypeGroup:
 			err = e.encodeGroup(instruction)
+		case TypeTemplateReference:
+			// NOTE: Only static template references are supported.
+			return e.encodeTemplateReference(instruction)
 		default:
 			field := acquireField()
 			field.ID = instruction.ID
@@ -209,7 +215,10 @@ func (e *Encoder) encodeGroup(instruction *Instruction) error {
 	releaseField(parent)
 
 	e.pmc.restore()
-	e.delWriterTo(current)
+	err = e.delWriterTo(current)
+	if err != nil {
+		return err
+	}
 	e.writerIndex = current // restore index
 	return nil
 }
@@ -255,11 +264,24 @@ func (e *Encoder) encodeSequence(instruction *Instruction) error {
 		}
 		e.msg.Unlock()
 		e.pmc.restore()
-		e.delWriterTo(current)
+		err = e.delWriterTo(current)
+		if err != nil {
+			return err
+		}
 	}
 	releaseField(parent)
 	e.writerIndex = current // restore index
 	return nil
+}
+
+func (e *Encoder) encodeTemplateReference(instruction *Instruction) error {
+	e.log("reference start: ")
+	for _, tpl := range e.repo {
+		if tpl.Name == instruction.Name {
+			return e.encodeSegment(tpl.Instructions)
+		}
+	}
+	return ErrD8
 }
 
 func (e *Encoder) log(param ...interface{}) {

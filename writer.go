@@ -36,9 +36,16 @@ func (w *writer) Write(p []byte) (int, error) {
 	return w.dataBuf.Write(p)
 }
 
-func (w *writer) WriteTo(writer io.Writer) {
-	_, _ = w.pMapBuf.WriteTo(writer)
-	_, _ = w.dataBuf.WriteTo(writer)
+func (w *writer) WriteTo(writer io.Writer) (int64, error) {
+	n1, err := w.pMapBuf.WriteTo(writer)
+	if err != nil {
+		return n1, err
+	}
+	n2, err := w.dataBuf.WriteTo(writer)
+	if err != nil {
+		return n1 + n2, err
+	}
+	return n1 + n2, nil
 }
 
 func (w *writer) Reset() {

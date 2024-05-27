@@ -68,6 +68,11 @@ type groupType struct {
 	}
 }
 
+type referenceType struct {
+	TemplateID uint `fast:"*"`
+	TestData   uint32
+}
+
 type benchmarkMessage struct {
 	TemplateID     uint   `fast:"*"`
 	MessageType    string `fast:"35"`
@@ -297,5 +302,11 @@ var (
 			OuterTestData: 2,
 			InnerGroup:    &grpSegment,
 		},
+	}
+
+	referenceData1    = []byte{0xc0, 0x87, 0x81}
+	referenceMessage1 = referenceType{
+		TemplateID: 7,
+		TestData:   1,
 	}
 )

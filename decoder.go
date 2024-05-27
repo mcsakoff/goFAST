@@ -242,6 +242,18 @@ func (d *Decoder) decodeSequence(instruction *Instruction) error {
 	return nil
 }
 
+func (d *Decoder) decodeTemplateReference(instruction *Instruction) error {
+	if d.logger != nil {
+		d.logger.Log("reference start: ")
+	}
+	for _, tpl := range d.repo {
+		if tpl.Name == instruction.Name {
+			return d.decodeSegment(tpl.Instructions)
+		}
+	}
+	return ErrD8
+}
+
 func (d *Decoder) decodeSegment(instructions []*Instruction) error {
 	if d.logger != nil {
 		d.logger.Shift()
@@ -255,6 +267,9 @@ func (d *Decoder) decodeSegment(instructions []*Instruction) error {
 			err = d.decodeSequence(instruction)
 		case TypeGroup:
 			err = d.decodeGroup(instruction)
+		case TypeTemplateReference:
+			// NOTE: Only static template references are supported.
+			err = d.decodeTemplateReference(instruction)
 		default:
 			if d.logger != nil {
 				d.logger.Log("decoding: ", instruction.Name)

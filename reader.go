@@ -60,9 +60,6 @@ func (r *reader) ReadPMap() (m *pMap, err error) {
 			return
 		}
 	}
-
-	// TODO what have to do here?
-	return
 }
 
 func (r *reader) ReadInt(nullable bool) (*int64, error) {

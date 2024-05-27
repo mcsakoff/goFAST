@@ -7,7 +7,6 @@ package fast_test
 import (
 	"bytes"
 	"io"
-	"io/ioutil"
 	"os"
 	"reflect"
 	"testing"
@@ -25,7 +24,9 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	defer ftpl.Close()
+	defer func() {
+		_ = ftpl.Close()
+	}()
 	tpls, _ := fast.ParseXMLTemplate(ftpl)
 
 	reader = &bytes.Buffer{}
@@ -83,6 +84,11 @@ func TestGroupDecode(t *testing.T) {
 	decode(groupData1, &msg, &groupMessage1, t)
 }
 
+func TestReferenceDecode(t *testing.T) {
+	var msg referenceType
+	decode(referenceData1, &msg, &referenceMessage1, t)
+}
+
 // write profile command: go test -bench=BenchmarkDecoder_DecodeReflection -cpuprofile=cpu.out -memprofile=mem.out
 // convert to cpuprof.pdf command: go tool pprof -pdf -output=cpuprof.pdf goFAST.test cpu.out
 // convert to memprof.pdf command: go tool pprof -pdf -output=memprof.pdf goFAST.test mem.out
@@ -105,8 +111,8 @@ func benchDecode(b *testing.B, msg interface{}) {
 		b.Fatal(err)
 	}
 
-	data, _ := ioutil.ReadAll(file)
-	file.Close()
+	data, _ := io.ReadAll(file)
+	_ = file.Close()
 	reader.Write(data)
 
 	b.ResetTimer()

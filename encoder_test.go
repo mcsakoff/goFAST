@@ -23,7 +23,9 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	defer ftpl.Close()
+	defer func() {
+		_ = ftpl.Close()
+	}()
 	tpls, _ := fast.ParseXMLTemplate(ftpl)
 
 	writer = &bytes.Buffer{}
@@ -68,4 +70,8 @@ func TestIntegerEncode(t *testing.T) {
 
 func TestGroupEncode(t *testing.T) {
 	encode(&groupMessage1, groupData1, t)
+}
+
+func TestReferenceEncode(t *testing.T) {
+	encode(&referenceMessage1, referenceData1, t)
 }
