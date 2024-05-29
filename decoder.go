@@ -126,9 +126,15 @@ func (d *Decoder) visitTemplateID() (uint, error) {
 		if err != nil {
 			return 0, err
 		}
+		d.storage.save("__template_id__", uint(*tmp))
 		return uint(*tmp), nil
+	} else {
+		tmp := d.storage.load("__template_id__")
+		if tmp == nil {
+			return 0, ErrD6
+		}
+		return tmp.(uint), nil
 	}
-	return 0, nil
 }
 
 func (d *Decoder) decodeGroup(instruction *Instruction) error {

@@ -304,9 +304,20 @@ var (
 		},
 	}
 
-	referenceData1    = []byte{0xc0, 0x87, 0x81}
+	referenceData1    = []byte{0xc0, 0x88, 0x81}
 	referenceMessage1 = referenceType{
+		TemplateID: 8,
+		TestData:   1,
+	}
+
+	testData1    = []byte{0xc0, 0x87, 0x81}
+	testMessage1 = referenceType{
 		TemplateID: 7,
 		TestData:   1,
+	}
+	testData2    = []byte{0x80, 0x82}
+	testMessage2 = referenceType{
+		TemplateID: 7,
+		TestData:   2,
 	}
 )

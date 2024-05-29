@@ -75,3 +75,8 @@ func TestGroupEncode(t *testing.T) {
 func TestReferenceEncode(t *testing.T) {
 	encode(&referenceMessage1, referenceData1, t)
 }
+
+func TestOptionalTemplateIDEncode(t *testing.T) {
+	encode(&testMessage1, testData1, t)
+	encode(&testMessage2, testData2, t)
+}

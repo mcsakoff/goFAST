@@ -89,6 +89,12 @@ func TestReferenceDecode(t *testing.T) {
 	decode(referenceData1, &msg, &referenceMessage1, t)
 }
 
+func TestOptionalTemplateIDDecode(t *testing.T) {
+	var msg referenceType
+	decode(testData1, &msg, &testMessage1, t)
+	decode(testData2, &msg, &testMessage2, t)
+}
+
 // write profile command: go test -bench=BenchmarkDecoder_DecodeReflection -cpuprofile=cpu.out -memprofile=mem.out
 // convert to cpuprof.pdf command: go tool pprof -pdf -output=cpuprof.pdf goFAST.test cpu.out
 // convert to memprof.pdf command: go tool pprof -pdf -output=memprof.pdf goFAST.test mem.out

@@ -72,12 +72,11 @@
         </group>
     </template>
 
-    <template name="RefData">
+    <template name="RefData" id="7" xmlns="http://www.fixprotocol.org/ns/fast/td/1.1">
         <uInt32 name="TestData" id="1"/>
     </template>
 
-    <template name="Reference" id="7" xmlns="http://www.fixprotocol.org/ns/fast/td/1.1">
-<!--        <uInt32 name="TestData" id="1"/>-->
+    <template name="Reference" id="8" xmlns="http://www.fixprotocol.org/ns/fast/td/1.1">
         <templateRef name="RefData"/>
     </template>
 

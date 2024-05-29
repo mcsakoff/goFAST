@@ -135,8 +135,15 @@ func (e *Encoder) commit() error {
 }
 
 func (e *Encoder) acceptTemplateID(id uint32) {
+	if tmp := e.storage.load("__template_id__"); tmp != nil {
+		prevId := uint32(tmp.(uint))
+		if id == prevId {
+			return
+		}
+	}
 	e.pmc.active().SetNextBit(true)
 	_ = e.writers[e.writerIndex].WriteUint(false, uint64(id), maxSize32)
+	e.storage.save("__template_id__", uint(id))
 }
 
 func (e *Encoder) encodeSegment(instructions []*Instruction) error {
