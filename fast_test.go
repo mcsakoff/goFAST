@@ -73,6 +73,11 @@ type referenceType struct {
 	TestData   uint32
 }
 
+type integerDeltaType struct {
+	TemplateID uint `fast:"*"`
+	Uint64     uint64
+}
+
 type benchmarkMessage struct {
 	TemplateID     uint   `fast:"*"`
 	MessageType    string `fast:"35"`
@@ -310,14 +315,21 @@ var (
 		TestData:   1,
 	}
 
-	testData1    = []byte{0xc0, 0x87, 0x81}
-	testMessage1 = referenceType{
-		TemplateID: 7,
-		TestData:   1,
-	}
-	testData2    = []byte{0x80, 0x82}
-	testMessage2 = referenceType{
-		TemplateID: 7,
-		TestData:   2,
+	integerDeltaTests = []struct {
+		data []byte
+		msg  integerDeltaType
+	}{
+		{
+			data: []byte{0xc0, 0x89, 0x85},
+			msg:  integerDeltaType{TemplateID: 9, Uint64: 5},
+		},
+		{
+			data: []byte{0x80, 0x81},
+			msg:  integerDeltaType{TemplateID: 9, Uint64: 6},
+		},
+		{
+			data: []byte{0x80, 0xff},
+			msg:  integerDeltaType{TemplateID: 9, Uint64: 5},
+		},
 	}
 )

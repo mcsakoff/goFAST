@@ -89,10 +89,11 @@ func TestReferenceDecode(t *testing.T) {
 	decode(referenceData1, &msg, &referenceMessage1, t)
 }
 
-func TestOptionalTemplateIDDecode(t *testing.T) {
-	var msg referenceType
-	decode(testData1, &msg, &testMessage1, t)
-	decode(testData2, &msg, &testMessage2, t)
+func TestIntegerDeltaDecode(t *testing.T) {
+	for _, tt := range integerDeltaTests {
+		var msg integerDeltaType
+		decode(tt.data, &msg, &tt.msg, t)
+	}
 }
 
 // write profile command: go test -bench=BenchmarkDecoder_DecodeReflection -cpuprofile=cpu.out -memprofile=mem.out

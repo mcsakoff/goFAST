@@ -4,6 +4,10 @@
 
 package fast
 
+import (
+	"fmt"
+)
+
 // Instruction contains rules for encoding/decoding field.
 type Instruction struct {
 	ID           uint
@@ -75,10 +79,14 @@ func (i *Instruction) inject(writer *writer, s storage, pmap *pMap, value interf
 			s.save(i.key, value)
 		}
 	case OperatorDelta:
-		if previous := s.load(i.key); previous != nil {
-			value = delta(value, previous)
+		var previous interface{}
+		if p := s.load(i.key); p != nil {
+			previous = p
+		} else {
+			previous = i.getDefault()
 		}
-		err = i.write(writer, value)
+		d := calcDelta(value, previous)
+		err = i.writeDelta(writer, d)
 		if err != nil {
 			return
 		}
@@ -138,6 +146,21 @@ func (i *Instruction) write(writer *writer, value interface{}) (err error) {
 	return
 }
 
+func (i *Instruction) writeDelta(writer *writer, value interface{}) (err error) {
+	if value == nil {
+		err = writer.WriteNil()
+		return
+	}
+
+	switch i.Type {
+	case TypeInt32, TypeUint32, TypeInt64, TypeUint64, TypeLength, TypeMantissa, TypeExponent:
+		err = writer.WriteInt(i.isNullable(), value.(int64), maxSize64)
+	default:
+		err = fmt.Errorf("unsupported type: %T", i)
+	}
+	return
+}
+
 func (i *Instruction) extract(reader *reader, s storage, pmap *pMap) (result interface{}, err error) {
 
 	if i.Type == TypeDecimal && len(i.Instructions) > 0 {
@@ -168,16 +191,21 @@ func (i *Instruction) extract(reader *reader, s storage, pmap *pMap) (result int
 			s.save(i.key, result)
 		}
 	case OperatorDelta:
-		result, err = i.read(reader)
+		result, err = i.readDelta(reader)
 		if err != nil {
 			return nil, err
 		}
-		if previous := s.load(i.key); previous != nil {
-			result = sum(result, previous)
+		var previous interface{}
+		if p := s.load(i.key); p != nil {
+			previous = p
+		} else {
+			previous = i.getDefault()
 		}
+		result = applyDelta(previous, result)
 		s.save(i.key, result)
 	case OperatorTail:
 		// TODO
+		panic("not implemented")
 	case OperatorCopy, OperatorIncrement:
 		if pmap.IsNextBitSet() {
 			result, err = i.read(reader)
@@ -200,7 +228,6 @@ func (i *Instruction) extract(reader *reader, s storage, pmap *pMap) (result int
 			}
 		}
 	}
-
 	return
 }
 
@@ -278,6 +305,45 @@ func (i *Instruction) read(reader *reader) (result interface{}, err error) {
 	}
 
 	return result, err
+}
+
+func (i *Instruction) readDelta(reader *reader) (result interface{}, err error) {
+	switch i.Type {
+	// The delta value is represented as a Signed Integer. A nullable integer delta is represented by a nullable Signed Integer.
+	case TypeInt32, TypeUint32, TypeInt64, TypeUint64, TypeLength, TypeMantissa, TypeExponent:
+		tmp, err := reader.ReadInt(i.isNullable())
+		if err != nil {
+			return result, err
+		}
+		if tmp != nil {
+			result = *tmp
+		}
+	default:
+		panic("not implemented")
+	}
+	return result, err
+}
+
+func (i *Instruction) getDefault() (result interface{}) {
+	switch i.Type {
+	case TypeUint32, TypeLength:
+		result = uint32(0)
+	case TypeUint64:
+		result = uint64(0)
+	case TypeASCIIString:
+		result = ""
+	case TypeUnicodeString:
+		result = ""
+	case TypeInt64, TypeMantissa:
+		result = int64(0)
+	case TypeInt32, TypeExponent:
+		result = int32(0)
+	case TypeDecimal:
+		result = float64(0)
+	default:
+		panic("not implemented")
+	}
+	return
 }
 
 func (i *Instruction) injectDecimal(writer *writer, s storage, pmap *pMap, value interface{}) (err error) {
@@ -369,6 +435,62 @@ func delta(values ...interface{}) (res interface{}) {
 		res = values[0].(uint64) - uint64(toInt(values[1]))
 	case uint32:
 		res = values[0].(uint32) - uint32(toInt(values[1]))
+	}
+	return
+}
+
+func applyDelta(value interface{}, delta interface{}) (res interface{}) {
+	switch v := value.(type) {
+	case int64:
+		res = v + int64(toInt(delta))
+	case int32:
+		res = v + int32(toInt(delta))
+	case int:
+		res = v + toInt(delta)
+	case uint64:
+		d := toInt(delta)
+		if d < 0 {
+			res = v - uint64(-d)
+		} else {
+			res = v + uint64(d)
+		}
+	case uint32:
+		d := toInt(delta)
+		if d < 0 {
+			res = v - uint32(-d)
+		} else {
+			res = v + uint32(d)
+		}
+	case uint:
+		d := toInt(delta)
+		if d < 0 {
+			res = v - uint(-d)
+		} else {
+			res = v + uint(d)
+		}
+	default:
+		panic("not implemented")
+	}
+	return
+}
+
+func calcDelta(value interface{}, prev interface{}) (res interface{}) {
+	switch v := value.(type) {
+	case int64:
+		res = v - prev.(int64)
+	case int32:
+		res = int64(v - prev.(int32))
+	case int:
+		res = int64(v - prev.(int))
+	case uint64:
+		// the delta is signed value, so we cannot operate with value bigger than uint64(MaxInt64)!
+		res = int64(toInt(v) - toInt(prev.(uint64)))
+	case uint32:
+		res = int64(toInt(v) - toInt(prev.(uint32)))
+	case uint:
+		res = int64(toInt(v) - toInt(prev.(uint)))
+	default:
+		panic("not implemented")
 	}
 	return
 }

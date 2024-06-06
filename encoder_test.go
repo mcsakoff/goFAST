@@ -40,7 +40,9 @@ func encode(msg interface{}, expect []byte, t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(writer.Bytes(), expect) {
-		t.Fatalf("data is not equal. current: %x expected: %x", writer.Bytes(), expect)
+		t.Errorf("data is not equal. current: %x expected: %x", writer.Bytes(), expect)
+		writer.Reset()
+		t.Fatal()
 	}
 
 	writer.Reset()
@@ -76,7 +78,9 @@ func TestReferenceEncode(t *testing.T) {
 	encode(&referenceMessage1, referenceData1, t)
 }
 
-func TestOptionalTemplateIDEncode(t *testing.T) {
-	encode(&testMessage1, testData1, t)
-	encode(&testMessage2, testData2, t)
+func TestIntegerDeltaEncode(t *testing.T) {
+	encoder.Reset()
+	for _, tt := range integerDeltaTests {
+		encode(&tt.msg, tt.data, t)
+	}
 }

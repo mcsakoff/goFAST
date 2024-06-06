@@ -80,6 +80,12 @@
         <templateRef name="RefData"/>
     </template>
 
+    <template name="IntegerDelta" id="9" xmlns="http://www.fixprotocol.org/ns/fast/td/1.1">
+        <uInt64 name="Uint64" id="1">
+            <delta/>
+        </uInt64>
+    </template>
+
     <template name="Benchmark" id="2521" xmlns="http://www.fixprotocol.org/ns/fast/td/1.1">
         <string name="MessageType" id="35">
             <constant value="X"/>
